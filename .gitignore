@@ -1,2 +1,5 @@
 *.vcd
 *.log
+runs/
+*.out
+*.py

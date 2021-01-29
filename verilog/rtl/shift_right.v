@@ -20,7 +20,7 @@ module shift_right(x,clk, rst,ld, out);
  reg [63:0] shiftreg;
  
 
-  always @(posedge clk or negedge rst) begin
+  always @(posedge clk or posedge rst) begin
        if (rst) begin
            shiftreg <= 0;
            out <= 1'b0;
