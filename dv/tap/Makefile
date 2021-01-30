@@ -14,6 +14,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+PDK_PATH ?= $(PDK_ROOT)/sky130A/
+VERILOG_PATH=../../verilog/
+
 .SUFFIXES:
 
 PATTERN = tap
@@ -21,7 +24,7 @@ PATTERN = tap
 all:  ${PATTERN:=.vcd}
 
 %.vvp: %_tb.v
-	iverilog -DFUNCTIONAL -DUNIT_DELAY=#1 -I .. -I ../../verilog/rtl \
+	iverilog -DFUNCTIONAL -DUNIT_DELAY=#0 -I $(PDK_PATH) -I $(VERILOG_PATH) \
 	$< -o $@
 
 %.vcd: %.vvp

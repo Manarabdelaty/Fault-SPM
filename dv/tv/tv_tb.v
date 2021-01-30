@@ -4,31 +4,31 @@
     Do not modify.
     Generated on: 2021-01-29 09:41:02
 */
-`include "/home/ma/ef/openlane/pdks/sky130A/libs.ref/sky130_fd_sc_hd/verilog/primitives.v"
-`include "/home/ma/ef/openlane/pdks/sky130A/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
-`include "/home/ma/ef/Fault-SPM/openlane/spm_top/runs/spm_top/results/dft/spm_top.tap.v"
+`include "libs.ref/sky130_fd_sc_hd/verilog/primitives.v"
+`include "libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
+`include "dft/2-spm_top.tap.v"
 
 module testbench;
+    wire[0:0] \tdo_paden_o ;
     wire[0:0] \tdo ;
-    reg[31:0] \mp ;
-    wire[0:0] \done ;
     reg[0:0] \start ;
+    reg[31:0] \mc ;
     wire[63:0] \prod ;
     reg[0:0] \rst ;
-    reg[31:0] \mc ;
-    wire[0:0] \tdo_paden_o ;
+    reg[31:0] \mp ;
+    wire[0:0] \done ;
     reg[0:0] \tms ;
-    reg[0:0] \tck ;
-    reg[0:0] \tdi ;
     reg[0:0] \trst ;
+    reg[0:0] \tck ;
     reg[0:0] \clk ;
+    reg[0:0] \tdi ;
 
     
     always #1 clk = ~clk;
     always #1 tck = ~tck;
 
     spm_top uut(
-        .\tdo ( \tdo ) , .\mp ( \mp ) , .\done ( \done ) , .\start ( \start ) , .\prod ( \prod ) , .\rst ( \rst ) , .\mc ( \mc ) , .\tdo_paden_o ( \tdo_paden_o ) , .\tms ( \tms ) , .\tck ( \tck ) , .\tdi ( \tdi ) , .\trst ( \trst ) , .\clk ( \clk ) 
+        .\tdo_paden_o ( \tdo_paden_o ) , .\tdo ( \tdo ) , .\start ( \start ) , .\mc ( \mc ) , .\prod ( \prod ) , .\rst ( \rst ) , .\mp ( \mp ) , .\done ( \done ) , .\tms ( \tms ) , .\trst ( \trst ) , .\tck ( \tck ) , .\clk ( \clk ) , .\tdi ( \tdi ) 
     );
 
     integer i, error;
@@ -43,8 +43,8 @@ module testbench;
     initial begin
         // $dumpfile("dut.vcd"); // DEBUG
         // $dumpvars(0, testbench);
-        \clk = 1 ;
         \rst = 1 ;
+        \clk = 1 ;
         \mc = 0 ;
         \mp = 0 ;
         \clk = 0 ;
@@ -57,50 +57,30 @@ module testbench;
 
         $readmemb("spm_top.bin.vec.bin", vectors);
         $readmemb("spm_top.bin.out.bin", gmOutput);
-        #50;
+        #2;
         rst = ~rst;
         trst = 1;        
-        #50;
+        #2;
         test(vectors[0], gmOutput[0]) ;
-        #1 ; 
         test(vectors[1], gmOutput[1]) ;
-        #1 ; 
         test(vectors[2], gmOutput[2]) ;
-        #1 ; 
         test(vectors[3], gmOutput[3]) ;
-        #1 ; 
         test(vectors[4], gmOutput[4]) ;
-        #1 ; 
         test(vectors[5], gmOutput[5]) ;
-        #1 ; 
         test(vectors[6], gmOutput[6]) ;
-        #1 ; 
         test(vectors[7], gmOutput[7]) ;
-        #1 ; 
         test(vectors[8], gmOutput[8]) ;
-        #1 ; 
         test(vectors[9], gmOutput[9]) ;
-        #1 ; 
         test(vectors[10], gmOutput[10]) ;
-        #1 ; 
         test(vectors[11], gmOutput[11]) ;
-        #1 ; 
         test(vectors[12], gmOutput[12]) ;
-        #1 ; 
         test(vectors[13], gmOutput[13]) ;
-        #1 ; 
         test(vectors[14], gmOutput[14]) ;
-        #1 ; 
         test(vectors[15], gmOutput[15]) ;
-        #1 ; 
         test(vectors[16], gmOutput[16]) ;
-        #1 ; 
         test(vectors[17], gmOutput[17]) ;
-        #1 ; 
         test(vectors[18], gmOutput[18]) ;
-        #1 ; 
         test(vectors[19], gmOutput[19]) ;
-        #1 ; 
 
         $display("SUCCESS_STRING");
         $finish;
@@ -134,11 +114,10 @@ module testbench;
             #2;
             // Shift-out response
             error = 0;
-            #3;
             for (i = 0; i< 267;i = i + 1) begin
                 tdi = 0;
                 scanInSerial[i] = tdo;
-                if (scanInSerial[i] != goldenOutput[i]) begin
+                if (scanInSerial[i] !== goldenOutput[i]) begin
                     $display("Error simulating output response at bit number %0d                        Expected %0b, Got %0b", i, goldenOutput[i], scanInSerial[i]);
                     error = error + 1;
                 end
@@ -152,7 +131,7 @@ module testbench;
             tms = 0; // run-test-idle
             #2;
 
-            if(scanInSerial != goldenOutput) begin
+            if(scanInSerial !== goldenOutput) begin
                 $display("Simulating TV failed, number fo errors %0d : ", error);
                 $error("SIMULATING_TV_FAILED");
                 $finish;

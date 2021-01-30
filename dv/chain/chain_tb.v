@@ -4,38 +4,40 @@
     Generated on: 2021-01-29 09:40:43
 */
 
-`include "/home/ma/ef/openlane/pdks/sky130A/libs.ref/sky130_fd_sc_hd/verilog/primitives.v"
-`include "/home/ma/ef/openlane/pdks/sky130A/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
-`include "/home/ma/ef/Fault-SPM/openlane/spm_top/runs/spm_top/results/dft/spm_top.chained.v"
+/* Need to export PDK_ROOT */
+`include "libs.ref/sky130_fd_sc_hd/verilog/primitives.v"
+`include "libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
+
+`include "dft/1-spm_top.chained.v"
 
 module testbench;
-    reg[31:0] \mp ;
+    wire[0:0] \done ;
+    reg[0:0] \sin ;
     reg[0:0] \shift ;
+    reg[31:0] \mp ;
+    reg[0:0] \start ;
+    wire[63:0] \prod ;
+    reg[0:0] \test ;
+    reg[0:0] \rst ;
     reg[31:0] \mc ;
     wire[0:0] \sout ;
-    wire[0:0] \done ;
     reg[0:0] \tck ;
-    reg[0:0] \rst ;
-    reg[0:0] \start ;
-    reg[0:0] \test ;
     reg[0:0] \clk ;
-    reg[0:0] \sin ;
-    wire[63:0] \prod ;
 
         always #1 clk = ~clk; 
         always #1 tck = ~tck; 
 
     spm_top uut(
-        .\mp ( \mp ) , .\shift ( \shift ) , .\mc ( \mc ) , .\sout ( \sout ) , .\done ( \done ) , .\tck ( \tck ) , .\rst ( \rst ) , .\start ( \start ) , .\test ( \test ) , .\clk ( \clk ) , .\sin ( \sin ) , .\prod ( \prod ) 
+        .\done ( \done ) , .\sin ( \sin ) , .\shift ( \shift ) , .\mp ( \mp ) , .\start ( \start ) , .\prod ( \prod ) , .\test ( \test ) , .\rst ( \rst ) , .\mc ( \mc ) , .\sout ( \sout ) , .\tck ( \tck ) , .\clk ( \clk ) 
     ); 
 
     wire[331:0] serializable =
-        332'b01011000110110111111000110100101101101010001011100001001100101110011100000010001101010001111110001011011011101010100011111111100101111000100011101111010011011101000000011011010110110001110110000101011010110101100011001110001101001100101001001111111110000100011000000110100110000111011101001100000010001000110010111100101100101000110;
+        332'b00001010101011100010110100011000010001010000011010100111111011010000111100100011101110011010010100111000100001111000001100111110001011011010111011100101100000111111100001111111101010101110100010100111100001110010111111100101110100111111110001010011011010011110111011011000000000111010100111101011011111101011110100101000010001011000;
     reg[331:0] serial;
     integer i;
     initial begin
-        $dumpfile("chain2.vcd");
-        $dumpvars(0, testbench);
+        // $dumpfile("chain.vcd");
+        // $dumpvars(0, testbench);
         \mc = 0 ;
         \mp = 0 ;
         \clk = 0 ;
@@ -54,7 +56,6 @@ module testbench;
             sin = serializable[i];
             #2;
         end
-        #2;
         for (i = 0; i < 332; i = i + 1) begin
             serial[i] = sout;
             #2;

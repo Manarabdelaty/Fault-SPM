@@ -4,37 +4,39 @@
     Generated on: 2021-01-29 09:41:01
 */
 
-`include "/home/ma/ef/openlane/pdks/sky130A/libs.ref/sky130_fd_sc_hd/verilog/primitives.v"
-`include "/home/ma/ef/openlane/pdks/sky130A/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
-`include "/home/ma/ef/Fault-SPM/openlane/spm_top/runs/spm_top/results/dft/spm_top.tap.v"
+/* Need to export PDK_ROOT */
+`include "libs.ref/sky130_fd_sc_hd/verilog/primitives.v"
+`include "libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
+
+`include "dft/2-spm_top.tap.v"
 
 module testbench;
+    wire[0:0] \tdo_paden_o ;
     wire[0:0] \tdo ;
-    reg[31:0] \mp ;
-    wire[0:0] \done ;
     reg[0:0] \start ;
+    reg[31:0] \mc ;
     wire[63:0] \prod ;
     reg[0:0] \rst ;
-    reg[31:0] \mc ;
-    wire[0:0] \tdo_paden_o ;
+    reg[31:0] \mp ;
+    wire[0:0] \done ;
     reg[0:0] \tms ;
-    reg[0:0] \tck ;
-    reg[0:0] \tdi ;
     reg[0:0] \trst ;
+    reg[0:0] \tck ;
     reg[0:0] \clk ;
+    reg[0:0] \tdi ;
 
 
     always #1 clk = ~clk;
     always #1 tck = ~tck;
 
     spm_top uut(
-        .\tdo ( \tdo ) , .\mp ( \mp ) , .\done ( \done ) , .\start ( \start ) , .\prod ( \prod ) , .\rst ( \rst ) , .\mc ( \mc ) , .\tdo_paden_o ( \tdo_paden_o ) , .\tms ( \tms ) , .\tck ( \tck ) , .\tdi ( \tdi ) , .\trst ( \trst ) , .\clk ( \clk ) 
+        .\tdo_paden_o ( \tdo_paden_o ) , .\tdo ( \tdo ) , .\start ( \start ) , .\mc ( \mc ) , .\prod ( \prod ) , .\rst ( \rst ) , .\mp ( \mp ) , .\done ( \done ) , .\tms ( \tms ) , .\trst ( \trst ) , .\tck ( \tck ) , .\clk ( \clk ) , .\tdi ( \tdi ) 
     );    
 
     integer i;
 
     wire[331:0] serializable =
-        332'b01111000110000110000100001011010001111111101000101011111110010111100010010011110111011111011000111100000100111011011100010001101001100101111001011000000011000000011010011000111000010011001111111001101101001100000110011111101111110000010010111001101111010100111001011100001010110001100001001110001000100101111100111111100011001000110;
+        332'b10001101110111011111101101110100111101001110100001000101001110010110100000011010000101010110010010111110000111001100011011001101110100110111001000101011101111111010000011100110001110110100010100010110100110111000110100011010111000001101111000001001010010110010000100011011000011001110101000100101110110010111110011111110101110011110;
     reg[331:0] serial;
 
     wire[7:0] tmsPattern = 8'b 01100110;
@@ -54,10 +56,10 @@ module testbench;
         \trst = 0 ;
 
         tms = 1;
-        #150;
+        #2;
         rst = ~rst;
         trst = 1;        
-        #150;
+        #2;
 
         /*
             Test PreloadChain Instruction
@@ -69,7 +71,6 @@ module testbench;
             tdi = serializable[i];
             #2;
         end
-        #3;
         for(i = 0; i< 332; i = i + 1) begin
             serial[i] = tdo;
             #2;
@@ -80,7 +81,6 @@ module testbench;
             $finish;
         end
         exitDR();
-        #2;
 
         $display("SUCCESS_STRING");
         $finish;
