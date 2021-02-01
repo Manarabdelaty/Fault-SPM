@@ -10,11 +10,12 @@
 **********************************************************************/
 `timescale 1ns/1ns
 
-module shift_right(x,clk, rst,ld, out);
+module shift_right(x,clk, rst,ld, shift, out);
 
  input clk;
  input rst;
  input ld;
+ input shift;
  input [63:0]x;
  output reg  out;
  reg [63:0] shiftreg;
@@ -29,7 +30,7 @@ module shift_right(x,clk, rst,ld, out);
               shiftreg <= x;
               out <= 1'b0;
        end
-       else  begin
+       else if(shift) begin
             out <= shiftreg[0];
             shiftreg <= {1'b0,shiftreg[63:1]};  ;
        end

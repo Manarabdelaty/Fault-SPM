@@ -28,7 +28,7 @@ module spm_top(mc, mp ,clk, rst, prod, start, done);
  
 
  
-   shift_right shifter ( .x({{32 {mp[31]}},mp[31:0]}) , .clk(clk) , .rst(rst) , .ld(ld), .out(ybit));
+   shift_right shifter ( .x({{32 {mp[31]}},mp[31:0]}) , .clk(clk) , .rst(rst) , .ld(ld), .shift(shift), .out(ybit));
    spm  multiplier     ( .x(mc[31:0]) ,.y(ybit) , .clk(clk) , .rst(rst) , .ld(ld) , .p(prodbit) );
    multifsm fsm        ( .clk(clk) , .rst(rst) , .proddone(proddone), .start(start), .done(done), .ld(ld), .shift(shift));
  

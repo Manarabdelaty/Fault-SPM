@@ -14,6 +14,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+PDK_PATH ?= $(PDK_ROOT)/sky130A/
+VERILOG_PATH=../../verilog/
+RTL_PATH=$(VERILOG_PATH)/rtl
+
+SIM ?= RTL
+
 .SUFFIXES:
 
 PATTERN = spm_top
@@ -21,8 +27,14 @@ PATTERN = spm_top
 all:  ${PATTERN:=.vcd}
 
 %.vvp: %_tb.v
-	iverilog -I .. -I ../../verilog/rtl \
+ifeq ($(SIM),RTL)
+	iverilog -I $(RTL_PATH) \
 	$< -o $@
+else  
+	iverilog -DFUNCTIONAL  -DGL -DUNIT_DELAY=#0 \
+	-I $(PDK_PATH) -I $(VERILOG_PATH) \
+	$< -o $@ 
+endif
 
 %.vcd: %.vvp
 	vvp $<

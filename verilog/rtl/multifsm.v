@@ -12,42 +12,35 @@
 
 module multifsm(clk, rst, proddone, start, done, ld, shift);
 
- input clk;
- input rst; 
- input start;
- input proddone;
- output  done;
- output   ld;
- output shift;
- 
- parameter [1:0] idle=2'b00, multiply=2'b01 , stdone= 2'b10;
- reg [1:0] state , newstate;
+  input clk;
+  input rst; 
+  input start;
+  input proddone;
+  output  done;
+  output   ld;
+  output shift;
+
+  parameter [1:0] IDLE=2'b00, MUL=2'b01 , DONE= 2'b10;
+  reg [1:0] state , newstate;
  
   always @* begin
- 
+    newstate = IDLE;
     case (state)
-       idle: if (start) newstate= multiply;
-             else       newstate= idle;
-       multiply: if (start)
-                  if (proddone) newstate= stdone;
-                  else          newstate= multiply;
-                 else newstate = idle;
-       stdone: if(start) newstate= stdone ;
-               else      newstate= idle;
-     default: newstate= 2'b00;
+        IDLE: if (start) newstate= MUL; else newstate= IDLE;
+        MUL: if (start & proddone) newstate = DONE; else if (start) newstate = MUL; else newstate = IDLE;
+        DONE: if(start) newstate= DONE ; else newstate= IDLE;
     endcase
-  
-   end
+
+    end
  
   always @( posedge clk or posedge rst)
          if (rst)
-              state <= idle;
+              state <= IDLE;
          else state <= newstate;
  
-
-  assign done  = (state == stdone);
-  assign ld    = (state == idle);
-  assign shift = (state== multiply) && !proddone;
+  assign done  = (state == DONE);
+  assign ld    = (state == IDLE);
+  assign shift = (state== MUL) && !proddone;
   
   
 endmodule

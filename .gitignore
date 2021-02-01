@@ -3,3 +3,6 @@
 runs/
 *.out
 *.py
+bsr_input/
+bsr_output/
+verilog/rtl/bsr*.v

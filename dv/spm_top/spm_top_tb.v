@@ -3,10 +3,19 @@
 
 `timescale 1ns/1ns
 
-`include "multifsm.v"
-`include "spm.v"
-`include "shift_right.v"
-`include "spm_top.v"
+`ifdef GL
+
+  /* Need to export PDK_ROOT */
+  `include "libs.ref/sky130_fd_sc_hd/verilog/primitives.v"
+  `include "libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
+
+  `include "ys/spm_top.v"
+`else
+  `include "multifsm.v"
+  `include "spm.v"
+  `include "shift_right.v"
+  `include "spm_top.v"
+`endif
 
 module spm_top_tb;
 
@@ -26,6 +35,16 @@ module spm_top_tb;
 
 	//Instantiation of Unit Under Test
 	spm_top uut (
+  `ifdef GL
+    .tms(1'b1),  // must be pulled to one
+    .tck(1'b0),  // must be pulled to zero 
+    .tdi(1'b0),  // must be pulled to zero
+    .trst(1'b0), // must be pulled to zero
+  `endif
+  `ifdef USE_POWER_PINS
+    .VPWR(1'b1),
+    .VGND(1'b0),
+  `endif
 		.clk(clk),
 		.rst(rst),
 		.mc(mc),
@@ -63,6 +82,11 @@ module spm_top_tb;
 		mc = 0;
 		mp = 0;
         start =0;
+	end
+
+  initial begin
+    $dumpfile("spm_top.vcd");
+    $dumpvars(0, spm_top_tb);
 	end
 
 

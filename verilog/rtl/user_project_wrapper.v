@@ -52,7 +52,7 @@ module user_project_wrapper (
     input [3:0] wbs_sel_i,
     input [31:0] wbs_dat_i,
     input [31:0] wbs_adr_i,
-    output wbs_ack_o,
+    output reg wbs_ack_o,
     output [31:0] wbs_dat_o,
 
     // Logic Analyzer Signals
@@ -79,17 +79,6 @@ module user_project_wrapper (
     /* User project is instantiated  here   */
     /*--------------------------------------*/
 
-    wire [32:0] prod_lo;
-    wire [32:0] prod_hi;
-    
-    assign valid = wb_stb_i && wb_cyc_i; 
-    assign we = wb_sel_i & {4{wb_we_i}};
-
-    always @(posedge wb_clk_i) begin
-        if(valid & we[0]) start <= wbs_dat_i[0];
-        if(valid) wbs_ack_o <= 1'b1;    
-    end
-
     spm_top spm_top (
     `ifdef USE_POWER_PINS
 	.vdda1(vdda1),	// User area 1 3.3V power
@@ -111,10 +100,9 @@ module user_project_wrapper (
 
 	.mc (la_data_in[31:0]),
 	.mp (la_data_in[63:32]),
+	.start (la_data_in[64]),
+    .done  (la_data_out[0]),
 	.prod (la_data_out[127:64]),
-
-	.start (wbs_dat_i[0]),
-    .done  (wbs_dat_o[0]),
 
     // IO Pads
     .tck(io_in[0]),  // test clock on one of the IOs ? 
@@ -123,7 +111,6 @@ module user_project_wrapper (
     .trst(io_in[3]),
     .tdo(io_out[4]),
     .tdo_paden_o(io_oeb[4])
-
     );
 
 endmodule	// user_project_wrapper
