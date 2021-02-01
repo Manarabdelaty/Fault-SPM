@@ -6,8 +6,13 @@
 `include "libs.ref/sky130_fd_sc_hd/verilog/primitives.v"
 `include "libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
 
-`include "dft/2-spm_top.tap.v"
-`include "rtl/user_project_wrapper.v"
+`ifdef GL
+  `include "gl/spm_top.v"
+  `include "gl/user_project_wrapper.v"
+`else
+  `include "dft/2-spm_top.tap.v"
+  `include "rtl/user_project_wrapper.v"
+`endif
 
 `ifndef MPRJ_IO_PADS
 `define MPRJ_IO_PADS 38
@@ -63,8 +68,8 @@ module wrapper_tb;
  	//Instantiation of Unit Under Test
 	user_project_wrapper uut (
   `ifdef USE_POWER_PINS
-        .VPWR(1'b1),
-        .VGND(1'b0),
+        .vccd1(1'b1),
+        .vssd1(1'b0),
    `endif
         .wb_clk_i(clk),
         .wb_rst_i(rst),

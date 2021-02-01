@@ -8,43 +8,51 @@
 `include "libs.ref/sky130_fd_sc_hd/verilog/primitives.v"
 `include "libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
 
-`include "dft/2-spm_top.tap.v"
+`ifdef GL
+    `include "gl/spm_top.v"
+`else
+    `include "dft/2-spm_top.tap.v"
+`endif
 
 module testbench;
-    wire[0:0] \tdo_paden_o ;
-    wire[0:0] \tdo ;
-    reg[0:0] \start ;
-    reg[31:0] \mc ;
-    wire[63:0] \prod ;
-    reg[0:0] \rst ;
-    reg[31:0] \mp ;
-    wire[0:0] \done ;
     reg[0:0] \tms ;
     reg[0:0] \trst ;
-    reg[0:0] \tck ;
+    reg[0:0] \start ;
+    reg[0:0] \rst ;
+    wire[0:0] \tdo_paden_o ;
+    reg[31:0] \mc ;
+    wire[0:0] \done ;
     reg[0:0] \clk ;
+    reg[31:0] \mp ;
+    wire[63:0] \prod ;
+    reg[0:0] \tck ;
+    wire[0:0] \tdo ;
     reg[0:0] \tdi ;
 
 
-    always #1 clk = ~clk;
-    always #1 tck = ~tck;
+    always #100 clk = ~clk;
+    always #100 tck = ~tck;
 
     spm_top uut(
-        .\tdo_paden_o ( \tdo_paden_o ) , .\tdo ( \tdo ) , .\start ( \start ) , .\mc ( \mc ) , .\prod ( \prod ) , .\rst ( \rst ) , .\mp ( \mp ) , .\done ( \done ) , .\tms ( \tms ) , .\trst ( \trst ) , .\tck ( \tck ) , .\clk ( \clk ) , .\tdi ( \tdi ) 
+    `ifdef USE_POWER_PINS
+        .VPWR(1'b1),
+        .VGND(1'b0),
+    `endif
+        .\tms ( \tms ) , .\trst ( \trst ) , .\start ( \start ) , .\rst ( \rst ) , .\tdo_paden_o ( \tdo_paden_o ) , .\mc ( \mc ) , .\done ( \done ) , .\clk ( \clk ) , .\mp ( \mp ) , .\prod ( \prod ) , .\tck ( \tck ) , .\tdo ( \tdo ) , .\tdi ( \tdi ) 
     );    
 
     integer i;
 
     wire[331:0] serializable =
-        332'b10001101110111011111101101110100111101001110100001000101001110010110100000011010000101010110010010111110000111001100011011001101110100110111001000101011101111111010000011100110001110110100010100010110100110111000110100011010111000001101111000001001010010110010000100011011000011001110101000100101110110010111110011111110101110011110;
+        332'b11000110000000010000111101000010100110100001010100101110010000010101100011111001111001010000100010101011101001100011011111111111000010000111110010100011010111000101010001101011011000110011111010110000010111100000100101111111101100000010111010101001011011001001110011011000110000101010110010000011000010111101011100010010000010100011;
     reg[331:0] serial;
 
     wire[7:0] tmsPattern = 8'b 01100110;
     wire[3:0] preload_chain = 4'b0011;
 
     initial begin
-        // $dumpfile("dut.vcd");
-        // $dumpvars(0, testbench);
+        $dumpfile("dut.vcd");
+        $dumpvars(0, testbench);
         \mc = 0 ;
         \mp = 0 ;
         \clk = 0 ;
@@ -56,10 +64,10 @@ module testbench;
         \trst = 0 ;
 
         tms = 1;
-        #2;
+        #200;
         rst = ~rst;
         trst = 1;        
-        #2;
+        #200;
 
         /*
             Test PreloadChain Instruction
@@ -69,11 +77,11 @@ module testbench;
 
         for (i = 0; i < 332; i = i + 1) begin
             tdi = serializable[i];
-            #2;
+            #200;
         end
         for(i = 0; i< 332; i = i + 1) begin
             serial[i] = tdo;
-            #2;
+            #200;
         end 
 
         if(serial !== serializable) begin
@@ -92,7 +100,7 @@ module testbench;
         begin
             for (i = 0; i< 5; i = i + 1) begin
                 tms = tmsPattern[i];
-                #2;
+                #200;
             end
 
             // At shift-IR: shift new instruction on tdi line
@@ -101,31 +109,31 @@ module testbench;
                 if(i == 3) begin
                     tms = tmsPattern[5];     // exit-ir
                 end
-                #2;
+                #200;
             end
 
             tms = tmsPattern[6];     // update-ir 
-            #2;
+            #200;
             tms = tmsPattern[7];     // run test-idle
-            #6;
+            #600;
         end
     endtask
 
     task enterShiftDR;
         begin
             tms = 1;     // select DR
-            #2;
+            #200;
             tms = 0;     // capture DR -- shift DR
-            #4;
+            #400;
         end
     endtask
 
     task exitDR;
         begin
             tms = 1;     // Exit DR -- update DR
-            #4;
+            #400;
             tms = 0;     // Run test-idle
-            #2;
+            #200;
         end
     endtask
 endmodule

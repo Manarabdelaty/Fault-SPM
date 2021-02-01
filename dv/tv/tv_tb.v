@@ -6,21 +6,26 @@
 */
 `include "libs.ref/sky130_fd_sc_hd/verilog/primitives.v"
 `include "libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
-`include "dft/2-spm_top.tap.v"
+
+`ifdef GL
+    `include "gl/spm_top.v"
+`else
+    `include "dft/2-spm_top.tap.v"
+`endif
 
 module testbench;
-    wire[0:0] \tdo_paden_o ;
-    wire[0:0] \tdo ;
-    reg[0:0] \start ;
-    reg[31:0] \mc ;
-    wire[63:0] \prod ;
-    reg[0:0] \rst ;
-    reg[31:0] \mp ;
-    wire[0:0] \done ;
     reg[0:0] \tms ;
     reg[0:0] \trst ;
-    reg[0:0] \tck ;
+    reg[0:0] \start ;
+    reg[0:0] \rst ;
+    wire[0:0] \tdo_paden_o ;
+    reg[31:0] \mc ;
+    wire[0:0] \done ;
     reg[0:0] \clk ;
+    reg[31:0] \mp ;
+    wire[63:0] \prod ;
+    reg[0:0] \tck ;
+    wire[0:0] \tdo ;
     reg[0:0] \tdi ;
 
     
@@ -28,14 +33,18 @@ module testbench;
     always #1 tck = ~tck;
 
     spm_top uut(
-        .\tdo_paden_o ( \tdo_paden_o ) , .\tdo ( \tdo ) , .\start ( \start ) , .\mc ( \mc ) , .\prod ( \prod ) , .\rst ( \rst ) , .\mp ( \mp ) , .\done ( \done ) , .\tms ( \tms ) , .\trst ( \trst ) , .\tck ( \tck ) , .\clk ( \clk ) , .\tdi ( \tdi ) 
+    `ifdef USE_POWER_PINS
+        .VPWR(1'b1),
+        .VGND(1'b0),
+    `endif
+        .\tms ( \tms ) , .\trst ( \trst ) , .\start ( \start ) , .\rst ( \rst ) , .\tdo_paden_o ( \tdo_paden_o ) , .\mc ( \mc ) , .\done ( \done ) , .\clk ( \clk ) , .\mp ( \mp ) , .\prod ( \prod ) , .\tck ( \tck ) , .\tdo ( \tdo ) , .\tdi ( \tdi ) 
     );
 
     integer i, error;
 
     reg [266:0] scanInSerial;
-    reg [266:0] vectors [0:19];
-    reg [266:0] gmOutput[0:19];
+    reg [266:0] vectors [0:9];
+    reg [266:0] gmOutput[0:9];
 
     wire[7:0] tmsPattern = 8'b 01100110;
     wire[3:0] preloadChain = 4'b 0011;
@@ -43,8 +52,8 @@ module testbench;
     initial begin
         // $dumpfile("dut.vcd"); // DEBUG
         // $dumpvars(0, testbench);
-        \rst = 1 ;
         \clk = 1 ;
+        \rst = 1 ;
         \mc = 0 ;
         \mp = 0 ;
         \clk = 0 ;
@@ -71,16 +80,6 @@ module testbench;
         test(vectors[7], gmOutput[7]) ;
         test(vectors[8], gmOutput[8]) ;
         test(vectors[9], gmOutput[9]) ;
-        test(vectors[10], gmOutput[10]) ;
-        test(vectors[11], gmOutput[11]) ;
-        test(vectors[12], gmOutput[12]) ;
-        test(vectors[13], gmOutput[13]) ;
-        test(vectors[14], gmOutput[14]) ;
-        test(vectors[15], gmOutput[15]) ;
-        test(vectors[16], gmOutput[16]) ;
-        test(vectors[17], gmOutput[17]) ;
-        test(vectors[18], gmOutput[18]) ;
-        test(vectors[19], gmOutput[19]) ;
 
         $display("SUCCESS_STRING");
         $finish;

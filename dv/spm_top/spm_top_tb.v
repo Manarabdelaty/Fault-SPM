@@ -9,7 +9,7 @@
   `include "libs.ref/sky130_fd_sc_hd/verilog/primitives.v"
   `include "libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
 
-  `include "ys/spm_top.v"
+  `include "gl/spm_top.v"
 `else
   `include "multifsm.v"
   `include "spm.v"
@@ -35,7 +35,7 @@ module spm_top_tb;
 
 	//Instantiation of Unit Under Test
 	spm_top uut (
-  `ifdef GL
+  `ifdef DFT
     .tms(1'b1),  // must be pulled to one
     .tck(1'b0),  // must be pulled to zero 
     .tdi(1'b0),  // must be pulled to zero

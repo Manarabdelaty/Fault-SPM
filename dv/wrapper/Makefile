@@ -18,6 +18,8 @@
 PDK_PATH ?= $(PDK_ROOT)/sky130A/
 VERILOG_PATH=../../verilog/
 
+SIM ?= RTL
+
 .SUFFIXES:
 
 PATTERN = wrapper
@@ -25,9 +27,13 @@ PATTERN = wrapper
 all:  ${PATTERN:=.vcd}
 
 %.vvp: %_tb.v
+ifeq ($(SIM),RTL)
 	iverilog -DFUNCTIONAL -DUNIT_DELAY=#0 -I $(PDK_PATH) -I $(VERILOG_PATH) \
 	$< -o $@
-
+else
+	iverilog -DFUNCTIONAL -DUNIT_DELAY=#0 -DUSE_POWER_PINS -DGL -I $(PDK_PATH) -I $(VERILOG_PATH) \
+	$< -o $@
+endif
 %.vcd: %.vvp
 	vvp $<
 
