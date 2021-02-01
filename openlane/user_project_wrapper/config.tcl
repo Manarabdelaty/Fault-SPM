@@ -32,8 +32,6 @@ set ::env(FP_IO_HLENGTH) $::unit
 set ::env(FP_IO_VTHICKNESS_MULT) 4
 set ::env(FP_IO_HTHICKNESS_MULT) 4
 
-set ::env(PL_RANDOM_INITIAL_PLACEMENT) 1
-
 set ::env(CLOCK_PORT) "wb_clk_i"
 set ::env(CLOCK_NET) "wb_clk_i"
 
@@ -53,19 +51,25 @@ set ::env(MAGIC_WRITE_FULL_LEF) 0
 # to be REMOVED -- just to get over magic hanging
 set ::env(MAGIC_GENERATE_LEF) 0
 
-set ::env(SYNTH_READ_BLACKBOX_LIB) 1
+# The following is because there are no std cells in the example wrapper project.
+set ::env(SYNTH_TOP_LEVEL) 1
+set ::env(PL_RANDOM_GLB_PLACEMENT) 1
+set ::env(PL_OPENPHYSYN_OPTIMIZATIONS) 0
+set ::env(DIODE_INSERTION_STRATEGY) 0
+set ::env(FILL_INSERTION) 0
+set ::env(TAP_DECAP_INSERTION) 0
 set ::env(CLOCK_TREE_SYNTH) 0
 
 set ::env(VERILOG_FILES) "\
     $script_dir/../../verilog/rtl/user_project_wrapper.v"
 
 set ::env(VERILOG_FILES_BLACKBOX) "\
-	$script_dir/../../verilog/dft/2-spm_top.tap.v"
+	$script_dir/../../verilog/dft/2-user_proj_top.tap.v"
 
 set ::env(EXTRA_LEFS) "\
-    $script_dir/../../lef/spm_top.lef"
+    $script_dir/../../lef/user_proj_top.lef"
 
 set ::env(EXTRA_GDS_FILES) "\
-	$script_dir/../../gds/spm_top.gds"
+	$script_dir/../../gds/user_proj_top.gds"
  	
-set ::env(DIODE_INSERTION_STRATEGY) "4"
+# set ::env(DIODE_INSERTION_STRATEGY) "4"

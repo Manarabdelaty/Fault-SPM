@@ -141,18 +141,7 @@ module spm_tb;
         rst = 1;
         #20;
         rst = 0;
-
-        // Odd Signed x Even Signed
-        x = -9;
-        Y = -80;
-        #10 start = 1'b1;
-        wait(done == 1'b1);
-        wait(done == 1'b0);
-        #20;
-        if (P == (x * 80)) $display("[PASS] %d x %d = %d", x, 80, P); else $display("[FAIL]  %d x %d != %d", x, 80, P);
-        start = 1'b0;
-
-
+        
         #1000;
         $finish;
 	end

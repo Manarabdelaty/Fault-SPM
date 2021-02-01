@@ -79,7 +79,7 @@ module user_project_wrapper (
     /* User project is instantiated  here   */
     /*--------------------------------------*/
 
-    spm_top spm_top (
+    user_proj_top user_proj_top (
     `ifdef USE_POWER_PINS
 	.vdda1(vdda1),	// User area 1 3.3V power
 	.vdda2(vdda2),	// User area 2 3.3V power
@@ -103,6 +103,7 @@ module user_project_wrapper (
 	.start (la_data_in[64]),
     .done  (la_data_out[0]),
 	.prod (la_data_out[127:64]),
+    .tie ({io_oeb[`MPRJ_IO_PADS-1:5], io_oeb[3:0], io_out[`MPRJ_IO_PADS-1:5], io_out[3:0], la_data_out[63:1], wbs_ack_o, wbs_dat_o[31:0]}),
 
     // IO Pads
     .tck(io_in[0]),  // test clock on one of the IOs ? 

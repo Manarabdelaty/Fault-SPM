@@ -8,32 +8,33 @@
 `include "libs.ref/sky130_fd_sc_hd/verilog/primitives.v"
 `include "libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
 
-`include "dft/1-spm_top.chained.v"
+`include "dft/1-user_proj_top.chained.v"
 
 module testbench;
-    wire[0:0] \done ;
-    reg[0:0] \sin ;
-    reg[0:0] \shift ;
     reg[31:0] \mp ;
-    reg[0:0] \start ;
-    wire[63:0] \prod ;
     reg[0:0] \test ;
-    reg[0:0] \rst ;
-    reg[31:0] \mc ;
-    wire[0:0] \sout ;
+    reg[0:0] \start ;
+    wire[169:0] \tie ;
+    reg[0:0] \sin ;
+    wire[0:0] \done ;
     reg[0:0] \tck ;
+    reg[0:0] \shift ;
+    reg[31:0] \mc ;
+    reg[0:0] \rst ;
+    wire[0:0] \sout ;
     reg[0:0] \clk ;
+    wire[63:0] \prod ;
 
         always #1 clk = ~clk; 
         always #1 tck = ~tck; 
 
-    spm_top uut(
-        .\done ( \done ) , .\sin ( \sin ) , .\shift ( \shift ) , .\mp ( \mp ) , .\start ( \start ) , .\prod ( \prod ) , .\test ( \test ) , .\rst ( \rst ) , .\mc ( \mc ) , .\sout ( \sout ) , .\tck ( \tck ) , .\clk ( \clk ) 
+    user_proj_top uut(
+        .\mp ( \mp ) , .\test ( \test ) , .\start ( \start ) , .\tie ( \tie ) , .\sin ( \sin ) , .\done ( \done ) , .\tck ( \tck ) , .\shift ( \shift ) , .\mc ( \mc ) , .\rst ( \rst ) , .\sout ( \sout ) , .\clk ( \clk ) , .\prod ( \prod ) 
     ); 
 
-    wire[331:0] serializable =
-        332'b00001010101011100010110100011000010001010000011010100111111011010000111100100011101110011010010100111000100001111000001100111110001011011010111011100101100000111111100001111111101010101110100010100111100001110010111111100101110100111111110001010011011010011110111011011000000000111010100111101011011111101011110100101000010001011000;
-    reg[331:0] serial;
+    wire[501:0] serializable =
+        502'b0100110100001101000011010011110001010111111101010011111001001010000011011110101011000000001100011111100100000000000001101000000010101111111001010010101110100001010111010011000100111101011001101101110110101011111011001101001010101000000011000010001100100111100101111100010111110111111100011001110111111111110001001001111011111000001101011011000001111000000100110101000011101100010000100010100110001100100000101110110001000010000111100000110110001101101001010001000000001000111100011100000001000000100111;
+    reg[501:0] serial;
     integer i;
     initial begin
         // $dumpfile("chain.vcd");
@@ -52,11 +53,11 @@ module testbench;
         rst = ~rst;
         shift = 1;
         test = 1;
-        for (i = 0; i < 332; i = i + 1) begin
+        for (i = 0; i < 502; i = i + 1) begin
             sin = serializable[i];
             #2;
         end
-        for (i = 0; i < 332; i = i + 1) begin
+        for (i = 0; i < 502; i = i + 1) begin
             serial[i] = sout;
             #2;
         end

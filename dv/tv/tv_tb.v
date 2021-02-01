@@ -8,43 +8,44 @@
 `include "libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v"
 
 `ifdef GL
-    `include "gl/spm_top.v"
+    `include "gl/user_proj_top.v"
 `else
-    `include "dft/2-spm_top.tap.v"
+    `include "dft/2-user_proj_top.tap.v"
 `endif
 
 module testbench;
-    reg[0:0] \tms ;
-    reg[0:0] \trst ;
-    reg[0:0] \start ;
-    reg[0:0] \rst ;
-    wire[0:0] \tdo_paden_o ;
-    reg[31:0] \mc ;
-    wire[0:0] \done ;
+    wire[169:0] \tie ;
     reg[0:0] \clk ;
+    reg[0:0] \tdi ;
+    wire[0:0] \done ;
+    reg[0:0] \trst ;
+    reg[31:0] \mc ;
+    reg[0:0] \start ;
+    wire[0:0] \tdo ;
+    reg[0:0] \rst ;
+    reg[0:0] \tck ;
+    wire[0:0] \tdo_paden_o ;
     reg[31:0] \mp ;
     wire[63:0] \prod ;
-    reg[0:0] \tck ;
-    wire[0:0] \tdo ;
-    reg[0:0] \tdi ;
+    reg[0:0] \tms ;
 
     
     always #1 clk = ~clk;
     always #1 tck = ~tck;
 
-    spm_top uut(
+    user_proj_top uut(
     `ifdef USE_POWER_PINS
         .VPWR(1'b1),
         .VGND(1'b0),
     `endif
-        .\tms ( \tms ) , .\trst ( \trst ) , .\start ( \start ) , .\rst ( \rst ) , .\tdo_paden_o ( \tdo_paden_o ) , .\mc ( \mc ) , .\done ( \done ) , .\clk ( \clk ) , .\mp ( \mp ) , .\prod ( \prod ) , .\tck ( \tck ) , .\tdo ( \tdo ) , .\tdi ( \tdi ) 
+        .\tie ( \tie ) , .\clk ( \clk ) , .\tdi ( \tdi ) , .\done ( \done ) , .\trst ( \trst ) , .\mc ( \mc ) , .\start ( \start ) , .\tdo ( \tdo ) , .\rst ( \rst ) , .\tck ( \tck ) , .\tdo_paden_o ( \tdo_paden_o ) , .\mp ( \mp ) , .\prod ( \prod ) , .\tms ( \tms ) 
     );
 
     integer i, error;
 
-    reg [266:0] scanInSerial;
-    reg [266:0] vectors [0:9];
-    reg [266:0] gmOutput[0:9];
+    reg [436:0] scanInSerial;
+    reg [266:0] vectors [0:19];
+    reg [436:0] gmOutput[0:19];
 
     wire[7:0] tmsPattern = 8'b 01100110;
     wire[3:0] preloadChain = 4'b 0011;
@@ -64,8 +65,8 @@ module testbench;
         \tdi = 0 ;
         \trst = 0 ;
 
-        $readmemb("spm_top.bin.vec.bin", vectors);
-        $readmemb("spm_top.bin.out.bin", gmOutput);
+        $readmemb("user_proj_top.bin.vec.bin", vectors);
+        $readmemb("user_proj_top.bin.out.bin", gmOutput);
         #2;
         rst = ~rst;
         trst = 1;        
@@ -80,6 +81,16 @@ module testbench;
         test(vectors[7], gmOutput[7]) ;
         test(vectors[8], gmOutput[8]) ;
         test(vectors[9], gmOutput[9]) ;
+        test(vectors[10], gmOutput[10]) ;
+        test(vectors[11], gmOutput[11]) ;
+        test(vectors[12], gmOutput[12]) ;
+        test(vectors[13], gmOutput[13]) ;
+        test(vectors[14], gmOutput[14]) ;
+        test(vectors[15], gmOutput[15]) ;
+        test(vectors[16], gmOutput[16]) ;
+        test(vectors[17], gmOutput[17]) ;
+        test(vectors[18], gmOutput[18]) ;
+        test(vectors[19], gmOutput[19]) ;
 
         $display("SUCCESS_STRING");
         $finish;
@@ -87,7 +98,7 @@ module testbench;
 
     task test;
         input [266:0] vector;
-        input [266:0] goldenOutput;
+        input [436:0] goldenOutput;
         begin
            
             // Preload Scan-Chain with TV
@@ -113,14 +124,14 @@ module testbench;
             #2;
             // Shift-out response
             error = 0;
-            for (i = 0; i< 267;i = i + 1) begin
+            for (i = 0; i< 437;i = i + 1) begin
                 tdi = 0;
                 scanInSerial[i] = tdo;
                 if (scanInSerial[i] !== goldenOutput[i]) begin
                     $display("Error simulating output response at bit number %0d                        Expected %0b, Got %0b", i, goldenOutput[i], scanInSerial[i]);
                     error = error + 1;
                 end
-                if(i == 266) begin
+                if(i == 436) begin
                     tms = 1; // Exit-DR
                 end
                 #2;

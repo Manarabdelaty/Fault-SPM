@@ -27,7 +27,7 @@ place_io_ol
 
 apply_def_template
 
-add_macro_placement spm_top 400 400 N
+add_macro_placement user_proj_top 1200 1650 N
 
 manual_macro_placement f
 
@@ -90,3 +90,5 @@ run_magic_drc
 run_lvs; # requires run_magic_spice_export
 
 run_antenna_check
+
+generate_final_summary_report
