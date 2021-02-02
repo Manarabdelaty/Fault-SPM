@@ -52,7 +52,7 @@ module user_project_wrapper (
     input [3:0] wbs_sel_i,
     input [31:0] wbs_dat_i,
     input [31:0] wbs_adr_i,
-    output reg wbs_ack_o,
+    output wbs_ack_o,
     output [31:0] wbs_dat_o,
 
     // Logic Analyzer Signals
@@ -81,14 +81,8 @@ module user_project_wrapper (
 
     user_proj_top user_proj_top (
     `ifdef USE_POWER_PINS
-	.vdda1(vdda1),	// User area 1 3.3V power
-	.vdda2(vdda2),	// User area 2 3.3V power
-	.vssa1(vssa1),	// User area 1 analog ground
-	.vssa2(vssa2),	// User area 2 analog ground
-	.vccd1(vccd1),	// User area 1 1.8V power
-	.vccd2(vccd2),	// User area 2 1.8V power
-	.vssd1(vssd1),	// User area 1 digital ground
-	.vssd2(vssd2),	// User area 2 digital ground
+        .VPWR(vccd1),	// User area 1 1.8V power
+        .VGND(vssd1),	// User area 1 digital ground
     `endif
 
 	// MGMT core clock and reset
@@ -101,8 +95,9 @@ module user_project_wrapper (
 	.mc (la_data_in[31:0]),
 	.mp (la_data_in[63:32]),
 	.start (la_data_in[64]),
-    .done  (la_data_out[0]),
-	.prod (la_data_out[127:64]),
+    .prod_sel(la_data_in[65]),
+    .done  (la_data_out[66]),
+	.prod (la_data_out[127:96]),
     .tie ({io_oeb[`MPRJ_IO_PADS-1:5], io_oeb[3:0], io_out[`MPRJ_IO_PADS-1:5], io_out[3:0], la_data_out[63:1], wbs_ack_o, wbs_dat_o[31:0]}),
 
     // IO Pads

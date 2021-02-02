@@ -26,9 +26,12 @@ module spm_top_tb;
 	reg signed [31: 0] mc;
 	reg signed [31: 0] mp;
 	reg start;
+  reg prod_sel;
 
 	//Outputs
-	wire signed [63: 0] prod;
+	reg signed [63: 0] prod;
+	wire [31: 0] _prod_;
+
 	wire done;
     
     wire signed [63:0] refp;
@@ -51,7 +54,8 @@ module spm_top_tb;
 		.mc(mc),
 		.mp(mp),
 		.start(start),
-		.prod(prod),
+    .prod_sel(prod_sel),
+		.prod(_prod_),
 		.done(done)
 	);
 
@@ -64,10 +68,10 @@ module spm_top_tb;
         //  if (done == 1'b1)
         //      $display ( "\t time = %d,\t clk = %b,\t rst = %b,\t start = %b,\t mc = %d , \t mp= %d , \t P = %d ,\tdone = %b, \tError= %b,\t refp= %d"
         //                          , $time,clk,rst,start,mc,mp, prod, done , err, refp);
-         if (err) begin
-             $display ("DUT Error at time %d", $time);
-             $display ("Expected value %d, Got Value %d", refp, prod);
-         end
+        //  if (err) begin
+        //      $display ("DUT Error at time %d", $time);
+        //      $display ("Expected value %d, Got Value %d", refp, prod);
+        //  end
     end
     
    event rst_trigger; 
@@ -82,7 +86,8 @@ module spm_top_tb;
 		rst = 1;
 		mc = 0;
 		mp = 0;
-        start =0;
+    start =0;
+    prod_sel = 0;
 	end
 
   initial begin
@@ -204,7 +209,10 @@ module spm_top_tb;
  end
  
  // Enable Logic
- 
+  
+ reg signed [31:0] prod_h;
+ reg signed [31:0] prod_l;
+
  initial begin
      forever begin
      @(start_trigger);
@@ -214,6 +222,15 @@ module spm_top_tb;
       @(negedge clk);
       end
 
+      prod_l = _prod_;
+      #2;
+      prod_sel = 1;
+      #2;
+      prod_h = _prod_;
+      #2;
+      prod = {prod_h, prod_l};
+      #2;
+      prod_sel = 0;
       $display ( "time = %d, clk = %b, rst = %b, start = %b, mc = %d ,  mp= %d , P = %d ,done = %b, Error= %b, refp= %d"
                                  , $time,clk,rst,start,mc,mp, prod, done , err, refp);       start=0;
      ->start_disabled;

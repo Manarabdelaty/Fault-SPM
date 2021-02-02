@@ -31,7 +31,7 @@ ifeq ($(SIM),RTL)
 	iverilog -I $(RTL_PATH) \
 	$< -o $@
 else  
-	iverilog -DFUNCTIONAL -DUSE_POWER_PINS -DGL -DDFT -DUNIT_DELAY=#0 \
+	iverilog -DFUNCTIONAL -DUSE_POWER_PINS -DGL -DDFT -DUNIT_DELAY=#1 \
 	-I $(PDK_PATH) -I $(VERILOG_PATH) \
 	$< -o $@ 
 endif

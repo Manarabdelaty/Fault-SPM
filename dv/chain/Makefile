@@ -24,7 +24,7 @@ PATTERN = chain
 all:  ${PATTERN:=.vcd}
 
 %.vvp: %_tb.v
-	iverilog -DFUNCTIONAL -DUNIT_DELAY=#0 -I $(PDK_PATH) -I $(VERILOG_PATH) \
+	iverilog -DFUNCTIONAL -DUNIT_DELAY=#1 -I $(PDK_PATH) -I $(VERILOG_PATH) \
 	$< -o $@
 
 %.vcd: %.vvp

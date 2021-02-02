@@ -11,30 +11,31 @@
 `include "dft/1-user_proj_top.chained.v"
 
 module testbench;
-    reg[31:0] \mp ;
-    reg[0:0] \test ;
-    reg[0:0] \start ;
-    wire[169:0] \tie ;
-    reg[0:0] \sin ;
-    wire[0:0] \done ;
-    reg[0:0] \tck ;
-    reg[0:0] \shift ;
-    reg[31:0] \mc ;
     reg[0:0] \rst ;
-    wire[0:0] \sout ;
+    reg[31:0] \mc ;
+    reg[0:0] \tck ;
     reg[0:0] \clk ;
-    wire[63:0] \prod ;
+    reg[0:0] \prod_sel ;
+    reg[31:0] \mp ;
+    wire[0:0] \sout ;
+    wire[31:0] \prod ;
+    reg[0:0] \shift ;
+    reg[0:0] \sin ;
+    reg[0:0] \start ;
+    reg[0:0] \test ;
+    wire[0:0] \done ;
+    wire[169:0] \tie ;
 
-        always #1 clk = ~clk; 
-        always #1 tck = ~tck; 
+    always #1 clk  = ~clk; 
+    always #10 tck = ~tck; 
 
     user_proj_top uut(
-        .\mp ( \mp ) , .\test ( \test ) , .\start ( \start ) , .\tie ( \tie ) , .\sin ( \sin ) , .\done ( \done ) , .\tck ( \tck ) , .\shift ( \shift ) , .\mc ( \mc ) , .\rst ( \rst ) , .\sout ( \sout ) , .\clk ( \clk ) , .\prod ( \prod ) 
+        .\rst ( \rst ) , .\mc ( \mc ) , .\tck ( \tck ) , .\clk ( \clk ) , .\prod_sel ( \prod_sel ) , .\mp ( \mp ) , .\sout ( \sout ) , .\prod ( \prod ) , .\shift ( \shift ) , .\sin ( \sin ) , .\start ( \start ) , .\test ( \test ) , .\done ( \done ) , .\tie ( \tie ) 
     ); 
 
-    wire[501:0] serializable =
-        502'b0100110100001101000011010011110001010111111101010011111001001010000011011110101011000000001100011111100100000000000001101000000010101111111001010010101110100001010111010011000100111101011001101101110110101011111011001101001010101000000011000010001100100111100101111100010111110111111100011001110111111111110001001001111011111000001101011011000001111000000100110101000011101100010000100010100110001100100000101110110001000010000111100000110110001101101001010001000000001000111100011100000001000000100111;
-    reg[501:0] serial;
+    wire[470:0] serializable =
+        471'b011101001110100101101000000001000000010000110110101000110000011011001111000111111100100110001011001100010100000111010100110000011101110000000001100011000011001100001000110101010111100111110001011001101001101000110101011100000101111101111011111000110011101010001111110011011011110010101100100100100101010101001010100110011001010011101100010111000010101011001110000110110110011110111100010101101010111010101001111101001110110011010110110010011101000001110111110010010100111;
+    reg[470:0] serial;
     integer i;
     initial begin
         // $dumpfile("chain.vcd");
@@ -44,22 +45,23 @@ module testbench;
         \clk = 0 ;
         \rst = 1 ;
         \start = 0 ;
+        \prod_sel = 0 ;
         \sin = 0 ;
         \shift = 0 ;
         \tck = 0 ;
         \test = 0 ;
 
-        #10;
+        #100;
         rst = ~rst;
         shift = 1;
         test = 1;
-        for (i = 0; i < 502; i = i + 1) begin
+        for (i = 0; i < 471; i = i + 1) begin
             sin = serializable[i];
-            #2;
+            #20;
         end
-        for (i = 0; i < 502; i = i + 1) begin
+        for (i = 0; i < 471; i = i + 1) begin
             serial[i] = sout;
-            #2;
+            #20;
         end
         if (serial === serializable) begin
             $display("SUCCESS_STRING");

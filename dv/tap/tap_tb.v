@@ -15,60 +15,62 @@
 `endif
 
 module testbench;
-    wire[169:0] \tie ;
-    reg[0:0] \clk ;
-    reg[0:0] \tdi ;
-    wire[0:0] \done ;
-    reg[0:0] \trst ;
-    reg[31:0] \mc ;
-    reg[0:0] \start ;
-    wire[0:0] \tdo ;
-    reg[0:0] \rst ;
-    reg[0:0] \tck ;
-    wire[0:0] \tdo_paden_o ;
-    reg[31:0] \mp ;
-    wire[63:0] \prod ;
     reg[0:0] \tms ;
+    reg[0:0] \tdi ;
+    reg[0:0] \prod_sel ;
+    reg[31:0] \mc ;
+    reg[31:0] \mp ;
+    wire[0:0] \tdo ;
+    wire[0:0] \tdo_paden_o ;
+    wire[0:0] \done ;
+    reg[0:0] \tck ;
+    reg[0:0] \clk ;
+    reg[0:0] \trst ;
+    wire[31:0] \prod ;
+    reg[0:0] \start ;
+    reg[0:0] \rst ;
+    wire[169:0] \tie ;
 
 
-    always #1 clk = ~clk;
-    always #1 tck = ~tck;
+    always #2 clk = ~clk;
+    always #10 tck = ~tck;
 
     user_proj_top uut(
     `ifdef USE_POWER_PINS
         .VPWR(1'b1),
         .VGND(1'b0),
     `endif
-        .\tie ( \tie ) , .\clk ( \clk ) , .\tdi ( \tdi ) , .\done ( \done ) , .\trst ( \trst ) , .\mc ( \mc ) , .\start ( \start ) , .\tdo ( \tdo ) , .\rst ( \rst ) , .\tck ( \tck ) , .\tdo_paden_o ( \tdo_paden_o ) , .\mp ( \mp ) , .\prod ( \prod ) , .\tms ( \tms ) 
+        .\tms ( \tms ) , .\tdi ( \tdi ) , .\prod_sel ( \prod_sel ) , .\mc ( \mc ) , .\mp ( \mp ) , .\tdo ( \tdo ) , .\tdo_paden_o ( \tdo_paden_o ) , .\done ( \done ) , .\tck ( \tck ) , .\clk ( \clk ) , .\trst ( \trst ) , .\prod ( \prod ) , .\start ( \start ) , .\rst ( \rst ) , .\tie ( \tie ) 
     );    
 
     integer i;
 
-    wire[501:0] serializable =
-        502'b1010110101101111001111101100111011011111011100101101011100110101011001001100110001000000000100001010010001001011001011101111110001101111111001101011111000101001111011001001110001100011001011101010010100100010110111101101011001111100010000110110101110100010110110101010011110110011100100011111001110111101110101111010110000010001000111010010001111111000110101011101110000011000001110010111101110000111111010010111001010011110100010011011001100100101100000011011001000110011010110111111100101011101101100;
-    reg[501:0] serial;
+    wire[470:0] serializable =
+        471'b000000010101111101000011111101110100110110111111101111010100010101010011010101110111000110011110110100001110100011001110001010000001110110111011000101110101101001101111000110110000110011011010000100010000011000011111111000000100011000110111001001010100101001110000110111001000000010111100011100101100000111100100011100001001101000011010000000001011011001010101011011010011010100110111111011001010101000110011111011110011000111110111000110011001001001010010100101101000001;
+    reg[470:0] serial;
 
     wire[7:0] tmsPattern = 8'b 01100110;
     wire[3:0] preload_chain = 4'b0011;
 
     initial begin
-        // $dumpfile("dut.vcd");
-        // $dumpvars(0, testbench);
+        $dumpfile("dut.vcd");
+        $dumpvars(0, testbench);
         \mc = 0 ;
         \mp = 0 ;
         \clk = 0 ;
         \rst = 1 ;
         \start = 0 ;
+        \prod_sel = 0 ;
         \tms = 0 ;
         \tck = 0 ;
         \tdi = 0 ;
         \trst = 0 ;
 
         tms = 1;
-        #2;
+        #20;
         rst = ~rst;
         trst = 1;        
-        #2;
+        #20;
 
         /*
             Test PreloadChain Instruction
@@ -76,13 +78,13 @@ module testbench;
         shiftIR(preload_chain);
         enterShiftDR();
 
-        for (i = 0; i < 502; i = i + 1) begin
+        for (i = 0; i < 471; i = i + 1) begin
             tdi = serializable[i];
-            #2;
+            #20;
         end
-        for(i = 0; i< 502; i = i + 1) begin
+        for(i = 0; i< 471; i = i + 1) begin
             serial[i] = tdo;
-            #2;
+            #20;
         end 
 
         if(serial !== serializable) begin
@@ -101,7 +103,7 @@ module testbench;
         begin
             for (i = 0; i< 5; i = i + 1) begin
                 tms = tmsPattern[i];
-                #2;
+                #20;
             end
 
             // At shift-IR: shift new instruction on tdi line
@@ -110,31 +112,31 @@ module testbench;
                 if(i == 3) begin
                     tms = tmsPattern[5];     // exit-ir
                 end
-                #2;
+                #20;
             end
 
             tms = tmsPattern[6];     // update-ir 
-            #2;
+            #20;
             tms = tmsPattern[7];     // run test-idle
-            #6;
+            #60;
         end
     endtask
 
     task enterShiftDR;
         begin
             tms = 1;     // select DR
-            #2;
+            #20;
             tms = 0;     // capture DR -- shift DR
-            #4;
+            #40;
         end
     endtask
 
     task exitDR;
         begin
             tms = 1;     // Exit DR -- update DR
-            #4;
+            #40;
             tms = 0;     // Run test-idle
-            #2;
+            #20;
         end
     endtask
 endmodule
