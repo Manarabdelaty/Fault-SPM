@@ -1,11 +1,11 @@
 magic
 tech sky130A
 magscale 1 2
-timestamp 1612285914
+timestamp 1612364181
 << obsli1 >>
 rect 1104 2159 78999 87601
 << obsm1 >>
-rect 198 1368 79842 87632
+rect 198 1504 79842 87632
 << metal2 >>
 rect 2226 89200 2282 90000
 rect 6642 89200 6698 90000
@@ -628,6 +628,8 @@ rect 19568 2128 19888 87632
 rect 34928 2128 35248 87632
 rect 50288 2128 50608 87632
 rect 65648 2128 65968 87632
+<< obsm4 >>
+rect 28027 4115 28461 9621
 << labels >>
 rlabel metal2 s 202 0 258 800 6 clk
 port 1 nsew signal input
@@ -1198,7 +1200,7 @@ string LEFclass BLOCK
 string FIXED_BBOX 0 0 80000 90000
 string LEFview TRUE
 string GDS_FILE /project/openlane/user_proj_top/runs/user_proj_top/results/magic/user_proj_top.gds
-string GDS_END 9293124
+string GDS_END 9352588
 string GDS_START 265700
 << end >>
 

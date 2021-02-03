@@ -66,7 +66,7 @@ module wrapper_tb;
   assign io_in[0] = 1'b0;   // tck
   assign io_in[1] = 1'b1;   // tms
   assign io_in[2] = 1'b0;   // tdi
-  assign io_in[3] = 1'b0;   // trst
+  assign io_in[5] = 1'b0;   // trst
 
  	//Instantiation of Unit Under Test
 	user_project_wrapper uut (

@@ -173,7 +173,7 @@ Xuser_proj_top wb_clk_i la_data_out[66] la_data_in[0] la_data_in[10] la_data_in[
 + wbs_dat_o[7] la_data_out[48] la_data_out[49] la_data_out[50] la_data_out[51] la_data_out[52]
 + la_data_out[53] la_data_out[54] la_data_out[55] la_data_out[56] la_data_out[57]
 + wbs_dat_o[8] la_data_out[58] la_data_out[59] la_data_out[60] la_data_out[61] la_data_out[62]
-+ la_data_out[63] io_out[0] io_out[1] io_out[2] io_out[3] wbs_dat_o[9] io_in[1] io_in[3]
++ la_data_out[63] io_out[0] io_out[1] io_out[2] io_out[3] wbs_dat_o[9] io_in[1] io_in[5]
 + vccd1 vssd1 user_proj_top
 .ends
 

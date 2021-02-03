@@ -104,7 +104,7 @@ module user_project_wrapper (
     .tck(io_in[0]),  // test clock on one of the IOs ? 
     .tms(io_in[1]),
     .tdi(io_in[2]),
-    .trst(io_in[3]),
+    .trst(io_in[5]),
     .tdo(io_out[4]),
     .tdo_paden_o(io_oeb[4])
     );

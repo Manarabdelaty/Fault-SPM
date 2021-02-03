@@ -2267,7 +2267,7 @@ MACRO user_proj_top
       LAYER li1 ;
         RECT 5.520 10.795 394.995 438.005 ;
       LAYER met1 ;
-        RECT 0.990 6.840 399.210 438.160 ;
+        RECT 0.990 7.520 399.210 438.160 ;
       LAYER met2 ;
         RECT 1.020 445.720 10.850 446.000 ;
         RECT 11.690 445.720 32.930 446.000 ;
@@ -2605,6 +2605,8 @@ MACRO user_proj_top
         RECT 4.400 7.840 396.000 8.520 ;
         RECT 4.400 7.120 395.600 7.840 ;
         RECT 4.000 6.975 395.600 7.120 ;
+      LAYER met4 ;
+        RECT 140.135 20.575 142.305 48.105 ;
   END
 END user_proj_top
 END LIBRARY

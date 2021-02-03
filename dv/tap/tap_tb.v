@@ -52,6 +52,8 @@ module testbench;
     wire[7:0] tmsPattern = 8'b 01100110;
     wire[3:0] preload_chain = 4'b0011;
 
+    wire tdo_pad_out = tdo_paden_o ? 1'bz : tdo;
+
     initial begin
         $dumpfile("dut.vcd");
         $dumpvars(0, testbench);
@@ -83,7 +85,7 @@ module testbench;
             #20;
         end
         for(i = 0; i< 471; i = i + 1) begin
-            serial[i] = tdo;
+            serial[i] = tdo_pad_out;
             #20;
         end 
 
