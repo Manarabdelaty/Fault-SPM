@@ -1,6 +1,6 @@
 # Fault-SPM
 
-32-bit serial parallel multiplier with design-for-testbability (DFT) structures, namely, scan-chain and JTAG controller.  The DFT structures are automatically inserted using [Fault](https://github.com/Cloud-V/Fault) and the design is taped-out using [OpenLANE](https://github.com/efabless/openlane).
+32-bit serial parallel multiplier with design-for-testability (DFT) structures, namely, scan-chain and JTAG controller.  The DFT structures are automatically inserted using [Fault](https://github.com/Cloud-V/Fault) and the design is taped-out using [OpenLANE](https://github.com/efabless/openlane).
 
 # I/O Ports
 
